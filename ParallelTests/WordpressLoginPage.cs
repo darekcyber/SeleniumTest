@@ -39,16 +39,26 @@ namespace ParallelTests
             BtnSubmit.Submit();
         }
 
-        public void CHeckCorrectLogin()
+        public void CheckCorrectLogin(string result)
         {
             try
             {
-                string text = h2.Text;
-                Assert.AreEqual("Witaj w WordPressie!!", text);
+                    Assert.That(h2.Text, Is.EqualTo("Witaj w WordPressie!"));
+                    Assert.That(result, Is.EqualTo("pass"));
+                    Console.WriteLine("Data were corect. Expected result was:" + result);
             }
             catch (Exception e)
             {
-                Console.WriteLine("Login Fail " + e);
+               if (result == "pass")
+                {
+                    Console.WriteLine("Data were corect. Expected result was:" + result);
+                    Assert.Fail();
+                }
+                else
+                {
+                    Console.WriteLine("Data were incorrect. Expected result was: " + result);
+                    Assert.Pass();
+                }
             }
         }
     }

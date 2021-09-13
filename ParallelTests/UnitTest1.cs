@@ -5,22 +5,26 @@ using System.Threading;
 
 namespace ParallelTests
 {
-    
-    public class FirefoxTesting : Hooks
+    [TestFixture]
+    [Parallelizable]
+    public class ChromeTesting : Hooks
     {
 
-        public FirefoxTesting() : base(BrowerType.Chrome){}
+        public ChromeTesting() : base(BrowerType.Chrome){}
 
-        [Test]
-        public void FirefoxTest()
+        [TestCase("test", "test.local.77!!", "pass")]
+        [TestCase("test", "test.local.77!", "fail")]
+        public void FirefoxTest(string login, string password, string result)
         {
             Driver.Navigate().GoToUrl("http://192.168.1.133/wp-login.php");
             Driver.Manage().Window.Maximize();
             WordpressLoginPage wordpressLoginPage = new WordpressLoginPage(Driver);
-            wordpressLoginPage.EnterUserNamePassword("test", "test.local.77!!");
+            wordpressLoginPage.EnterUserNamePassword(login, password);
             wordpressLoginPage.SubmitLogin();
             Thread.Sleep(2000);
-            Assert.Pass();
+            wordpressLoginPage.CheckCorrectLogin(result);
+
+            //Assert.Pass();
         }
         [TearDown]
         public void TearDown()
@@ -29,28 +33,28 @@ namespace ParallelTests
         }
     }
 
-    //[TestFixture]
-    //[Parallelizable]
-    //public class ChromeTesting : Hooks
-    //{
 
-    //    public ChromeTesting() : base(BrowerType.Chrome) { }
+    public class FirefoxTesting : Hooks
+    {
 
-    //    [Test]
-    //    public void FirefoxTest()
-    //    {
-    //        Driver.Navigate().GoToUrl("http://192.168.1.133/wp-login.php");
-    //        Driver.Manage().Window.Maximize();
-    //        WordpressLoginPage wordpressLoginPage = new WordpressLoginPage(Driver);
-    //        wordpressLoginPage.EnterUserNamePassword("test", "test.local.77!!");
-    //        wordpressLoginPage.SubmitLogin();
-    //        Thread.Sleep(2000);
-    //        Assert.Pass();
-    //    }
-    //    [TearDown]
-    //    public void TearDown()
-    //    {
-    //        Driver.Quit();
-    //    }
-    //}
+        public FirefoxTesting() : base(BrowerType.Firefox) { }
+
+        [TestCase("test", "test.local.77!!", "pass")]
+        [TestCase("test", "test.local.77!", "fail")]
+        public void FirefoxTest(string login, string password, string result)
+        {
+            Driver.Navigate().GoToUrl("http://192.168.1.133/wp-login.php");
+            Driver.Manage().Window.Maximize();
+            WordpressLoginPage wordpressLoginPage = new WordpressLoginPage(Driver);
+            wordpressLoginPage.EnterUserNamePassword(login, password);
+            wordpressLoginPage.SubmitLogin();
+            Thread.Sleep(2000);
+            wordpressLoginPage.CheckCorrectLogin(result);
+        }
+        [TearDown]
+        public void TearDown()
+        {
+            Driver.Quit();
+        }
+    }
 }
